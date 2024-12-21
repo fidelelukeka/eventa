@@ -1,7 +1,17 @@
-# views.py
 from django.shortcuts import render
+from rest_framework import generics
+from .models import Event
+from .serializer import EventSerializer, EventCreateUpdateSerializer
 
-def home(request):
-    # You can pass context to the template
-    context = {'message': 'Welcome to the site!'}
-    return render(request, 'front-end/index.html', context)
+class EventListCreateView(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return EventCreateUpdateSerializer
+        return EventSerializer
+
+class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventCreateUpdateSerializer
